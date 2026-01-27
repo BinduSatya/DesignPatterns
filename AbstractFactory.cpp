@@ -5,11 +5,13 @@ class Button
 {
 public:
     virtual void render() = 0;
+    virtual ~Button() = default;
 };
 class Checkbox
 {
 public:
     virtual void toggle() = 0;
+    virtual ~Checkbox() = default;
 };
 
 class WindowsButton : public Button
@@ -98,5 +100,8 @@ int main()
 
     button->render();
     checkbox->toggle();
+    delete factory;
+    delete button;
+    delete checkbox;
     return 0;
 }
