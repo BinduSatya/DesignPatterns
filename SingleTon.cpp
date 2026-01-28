@@ -3,30 +3,42 @@ using namespace std;
 
 class Singleton
 {
+private:
+    static Singleton *instance;
+
     Singleton()
     {
         cout << "SingleTon is created\n";
     }
 
 public:
-    static Singleton *createInstance()
+    static Singleton *getInstance()
     {
-        if (onlyInstance != nullptr)
+        if (instance == nullptr)
         {
-            return new Singleton();
+            instance = new Singleton();
         }
+        return instance;
     }
+
     ~Singleton()
     {
         cout << "Singleton is deleted\n";
     }
 };
 
-static Singleton *onlyInstance = nullptr;
+Singleton *Singleton::instance = nullptr;
 
 int main()
 {
-    Singleton *instance = onlyInstance;
-    delete instance;
+    Singleton *s1 = Singleton::getInstance();
+    Singleton *s2 = Singleton::getInstance();
+
+    Singleton *s3 = s3->getInstance();
+
+    if (s1 == s2 && s3 == s2)
+        cout << "same";
+    else
+        cout << "diff";
     return 0;
 }
