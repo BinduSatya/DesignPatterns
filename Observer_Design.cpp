@@ -5,8 +5,8 @@ then other objects need to know that the object is changed.
 Solution:
 When a observer subscriber subscribed to observable,
 then the observable appends the observer into a list,
-and when there is change in the state of the observer then
-it will send the new changes to all those subscribers(observables)
+and when there is change in the state of the observervables then
+it will send the new changes to all those subscribers(observers)
 */
 
 #include <bits/stdc++.h>
@@ -24,6 +24,8 @@ class IChannel
 public:
     virtual void subscribe(ISubscriber *subscriber) = 0;
     virtual void unsubscribe(ISubscriber *subscriber) = 0;
+    virtual string getName() = 0;
+    virtual string getVideoData() = 0;
     virtual void notify() = 0;
     virtual ~IChannel() {};
 };
@@ -33,12 +35,17 @@ class Channel : public IChannel
 private:
     vector<ISubscriber *> subscribers;
     string latestVideo;
+    string name;
 
 public:
-    string name;
     Channel(string name)
     {
         this->name = name;
+    }
+
+    string getName() override
+    {
+        return this->name;
     }
 
     void subscribe(ISubscriber *subscriber) override
@@ -76,7 +83,7 @@ public:
         notify();
     }
 
-    string getVideoData()
+    string getVideoData() override
     {
         return "\n" + latestVideo + "\n";
     }
@@ -86,7 +93,7 @@ class Subscriber : public ISubscriber
 {
 private:
     string name;
-    Channel *channel = nullptr;
+    IChannel *channel;
 
 public:
     Subscriber(string name)
@@ -110,7 +117,7 @@ public:
     {
         if (this->channel != nullptr)
         {
-            cout << "\nHey " + this->name + " Getting latest video from the channel " + this->channel->name + " is " + this->channel->getVideoData();
+            cout << "\nHey " + this->name + " Getting latest video from the channel " + this->channel->getName() + " is " + this->channel->getVideoData();
         }
         else
         {
