@@ -4,7 +4,7 @@ It is used to attach additional responsibilites to an object
 dynamically. Decorator provides a flexible alternative to subclass for
 extending functionality.
 
-
+- With this design pattern, we can only add decorators, but can't remove them.
 Where can be used:
 1. When text will be converted to Bold, Itallic, Underline
 2. Validating a form: Email Validation, SQL validation, ..., etc
@@ -13,91 +13,106 @@ Where can be used:
 #include <bits/stdc++.h>
 using namespace std;
 
-class ICharacter
+class Coffee
 {
 public:
-    virtual string getAbilites() const = 0;
-    virtual ~ICharacter() {};
+    virtual string getDescription() = 0;
+    virtual double getCost() = 0;
+    virtual ~Coffee() {};
 };
 
-class Mario : public ICharacter
+class Espresso : public Coffee
 {
+
 public:
-    string getAbilites() const override
+    string getDescription()
     {
-        return "Mario ";
+        return "Espresso";
+    }
+    double getCost() override
+    {
+        return 150.00;
     }
 };
 
-class CharacterDecorator : public ICharacter
+class CoffeeDecorator : public Coffee
 {
 protected:
-    ICharacter *Character;
+    Coffee *coffee;
 
 public:
-    CharacterDecorator(ICharacter *c)
+    CoffeeDecorator(Coffee *c) : coffee(c) {};
+    virtual ~CoffeeDecorator()
     {
-        this->Character = c;
-    }
-    virtual ~CharacterDecorator()
-    {
-        delete Character;
+        delete coffee;
     }
 };
 
-class HeightUp : public CharacterDecorator
+class AddMilk : public CoffeeDecorator
 {
 public:
-    HeightUp(ICharacter *ch) : CharacterDecorator(ch) {};
-    string getAbilites() const override
+    AddMilk(Coffee *ch) : CoffeeDecorator(ch) {};
+    string getDescription() override
     {
-        return Character->getAbilites() + "with Height Up ";
+        return coffee->getDescription() + " with Milk";
+    }
+
+    double getCost() override
+    {
+        return coffee->getCost() + 49.99;
     }
 };
 
-class GunPowerUp : public CharacterDecorator
+class AddSugar : public CoffeeDecorator
 {
 public:
-    GunPowerUp(ICharacter *ch) : CharacterDecorator(ch) {};
-    string getAbilites() const override
+    AddSugar(Coffee *ch) : CoffeeDecorator(ch) {};
+    string getDescription() override
     {
-        return Character->getAbilites() + "with Gun Power Up ";
+        return coffee->getDescription() + " with Sugar";
+    }
+
+    double getCost() override
+    {
+        return coffee->getCost() + 19.99;
     }
 };
 
-class StarPower : public CharacterDecorator
+class AddFoam : public CoffeeDecorator
 {
 public:
-    StarPower(ICharacter *ch) : CharacterDecorator(ch) {};
-    string getAbilites() const override
+    AddFoam(Coffee *ch) : CoffeeDecorator(ch) {};
+    string getDescription() override
     {
-        return Character->getAbilites() + "with Star Power Up with limited time ";
+        return coffee->getDescription() + " with Foam";
     }
 
-    ~StarPower()
+    double getCost() override
     {
-        cout << "\nDestroying Star Power " << endl;
+        return coffee->getCost() + 4.99;
     }
 };
 
 int main()
 {
-    ICharacter *mario = new Mario();
-    cout << "Basic Character " << mario->getAbilites() << endl;
+    Coffee *espresso = new Espresso();
+    cout << espresso->getDescription() << endl;
+    cout << espresso->getCost() << endl;
 
-    // Increasing Mario Height
-    mario = new HeightUp(mario);
-    cout << "After HeightUp:" << mario->getAbilites() << endl;
+    // Adding Milk
+    espresso = new AddMilk(espresso);
+    cout << espresso->getDescription() << endl;
+    cout << espresso->getCost() << endl;
 
-    // Giving Gun Power
-    mario = new GunPowerUp(mario);
-    cout << "After Gun PowerUp:" << mario->getAbilites() << endl;
+    // Adding Sugar
+    espresso = new AddSugar(espresso);
+    cout << espresso->getDescription() << endl;
+    cout << espresso->getCost() << endl;
 
-    // Giving Star Power
-    mario = new StarPower(mario);
-    cout << "After Star PowerUp:" << mario->getAbilites() << endl;
-
-    // losing star power;
-    delete mario;
+    // Adding Foam
+    espresso = new AddFoam(espresso);
+    cout << espresso->getDescription() << endl;
+    cout << espresso->getCost() << endl;
+    delete espresso;
     return 0;
 }
