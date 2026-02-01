@@ -1,38 +1,53 @@
+#pragma once
 #include <bits/stdc++.h>
 using namespace std;
-
-#pragma once
 
 class PaymentStrategy
 {
 public:
-    virtual void processPayment(double amount) = 0;
+    virtual ~PaymentStrategy() = default;
+    virtual void process(double amount) = 0;
 };
 
 class CreditCardPayment : public PaymentStrategy
 {
 public:
-    void processPayment(double amount) override
+    CreditCardPayment()
     {
-        cout << "Processing Credit card payment of amount ₹" << amount << endl;
+        cout << "Credit Card Payment Initiated" << endl;
+    }
+
+    void process(double amount) override
+    {
+        cout << "Processing Credit card payment of amount Rup. " << ceil(amount) << endl;
     }
 };
 
 class UPIPayment : public PaymentStrategy
 {
 public:
-    void processPayment(double amount) override
+    UPIPayment()
     {
-        cout << "Processing UPI payment of amount ₹" << amount << endl;
+        cout << "Credit Card Payment Initiated" << endl;
+    }
+
+    void process(double amount) override
+    {
+        cout << "Processing UPI payment of amount Rup. " << ceil(amount) << endl;
     }
 };
 
 class EMIPayment : public PaymentStrategy
 {
 public:
-    void processPayment(double amount) override
+    EMIPayment()
     {
-        cout << "Processing EMI payment of amount Rup." << amount << endl;
+        cout << "Credit Card Payment Initiated" << endl;
+    }
+
+    void process(double amount) override
+    {
+        cout << "Processing EMI payment of amount Rup. " << ceil(amount) << endl;
     }
 };
 
@@ -46,15 +61,15 @@ public:
     Payment(double amount, PaymentStrategy *payStrat)
     {
         this->amount = amount;
-        this->paymentStrat = payStrat;
+        paymentStrat = payStrat;
     }
     ~Payment() {}
 
     void processPayment()
     {
-        if (amount > 0)
+        if (amount > 0 && paymentStrat != nullptr)
         {
-            paymentStrat->processPayment(amount);
+            paymentStrat->process(amount);
         }
         else
         {

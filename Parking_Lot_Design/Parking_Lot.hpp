@@ -17,17 +17,25 @@ public:
         this->parkingspots = parkingspots;
     }
 
-    ParkingSpot *findAvailableSpot(string vehicleType)
+    bool canFit(VehicleType vehicleType, VehicleType capacity)
     {
+        return static_cast<int>(vehicleType) <= static_cast<int>(capacity);
+    }
+
+    ParkingSpot *findAvailableSpot(VehicleType vehicleType)
+    {
+        ParkingSpot *bestSpot = nullptr;
         for (ParkingSpot *spot : parkingspots)
         {
-            if (!spot->isOccupied() && spot->getSpotType() == vehicleType)
+            if (!spot->isOccupied() && canFit(vehicleType, spot->getSpotType()))
             {
-                return spot;
+                if (!bestSpot || static_cast<int>(bestSpot->getSpotType()) > static_cast<int>(spot->getSpotType()))
+                {
+                    bestSpot = spot;
+                }
             }
         }
-
-        return nullptr;
+        return bestSpot;
     }
 
     ParkingSpot *parkVehicle(Vehicle *vehicle)

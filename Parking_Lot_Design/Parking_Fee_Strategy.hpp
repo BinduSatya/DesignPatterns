@@ -3,49 +3,68 @@ Strategy Design Pattern for calculating Parking Fee
 */
 #pragma once
 #include <bits/stdc++.h>
+#include "VehicleType.hpp"
 using namespace std;
 
 class ParkingFeeStrategy
 {
 public:
-    virtual double calculateFee(string vehicleType, int durationInHours) = 0;
+    virtual double calculateFee(VehicleType spotType, int durationInHours) = 0;
     ~ParkingFeeStrategy() {};
 };
 
 class BaseFareRateStrategy : public ParkingFeeStrategy
 {
 public:
-    double calculateFee(string vehicleType, int durationInHours) override
+    double calculateFee(VehicleType spotType, int durationInHours) override
     {
-        if (vehicleType == "car")
-            return durationInHours * 10.00;
+        switch (spotType)
+        {
+        case VehicleType::CAR:
+            return durationInHours * 10.0;
 
-        else if (vehicleType == "bike")
-            return durationInHours * 5.00;
-        else if (vehicleType == "auto")
-            return durationInHours * 7.50;
-        else if (vehicleType == "heavy")
-            return durationInHours * 15.00;
-        else
-            return durationInHours * 10.00;
+        case VehicleType::BIKE:
+            return durationInHours * 5.0;
+
+        case VehicleType::AUTO:
+            return durationInHours * 7.5;
+
+        case VehicleType::HEAVY:
+            return durationInHours * 15.0;
+
+        case VehicleType::OTHER:
+            return durationInHours * 10.0;
+
+        default:
+            return durationInHours * 10.0;
+        }
     }
 };
 
 class PremiumFareRateStrategy : public ParkingFeeStrategy
 {
 public:
-    double calculateFee(string vehicleType, int durationInHours) override
+    double calculateFee(VehicleType spotType, int durationInHours) override
     {
-        if (vehicleType == "car")
+        switch (spotType)
+        {
+        case VehicleType::CAR:
             return durationInHours * 20.00;
 
-        else if (vehicleType == "bike")
+        case VehicleType::BIKE:
             return durationInHours * 10.00;
-        else if (vehicleType == "auto")
+
+        case VehicleType::AUTO:
             return durationInHours * 15.00;
-        else if (vehicleType == "heavy")
+
+        case VehicleType::HEAVY:
             return durationInHours * 30.00;
-        else
+
+        case VehicleType::OTHER:
             return durationInHours * 20.00;
+
+        default:
+            return durationInHours * 10.0;
+        }
     }
 };

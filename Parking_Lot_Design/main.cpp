@@ -60,9 +60,9 @@ int main()
     ParkingFeeStrategy *premium = new PremiumFareRateStrategy();
 
     // Creating Vehicles
-    Vehicle *bike = VehicleFactory::createVehicle("bike", "tg-92", basic);
-    Vehicle *car = VehicleFactory::createVehicle("car", "Ap-12", premium);
-    Vehicle *auto1 = VehicleFactory::createVehicle("auto", "od-32", basic);
+    Vehicle *bike = VehicleFactory::createVehicle(VehicleType::BIKE, "tg-92", basic);
+    Vehicle *car = VehicleFactory::createVehicle(VehicleType::CAR, "Ap-12", premium);
+    Vehicle *auto1 = VehicleFactory::createVehicle(VehicleType::AUTO, "od-32", basic);
 
     ParkingSpot *bikeSpot = parkingLot->parkVehicle(bike);
     ParkingSpot *carSpot = parkingLot->parkVehicle(car);

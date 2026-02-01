@@ -2,10 +2,10 @@
 Factory Design Pattern for creating Vehicle Types
 */
 
-#include <bits/stdc++.h>
-#include "Parking_Fee_Strategy.hpp"
-
 #pragma once
+#include <bits/stdc++.h>
+#include "VehicleType.hpp"
+#include "Parking_Fee_Strategy.hpp"
 
 using namespace std;
 
@@ -13,83 +13,82 @@ class Vehicle
 {
 protected:
     string licenceNumber;
-    string vehicleType;
+    VehicleType vehicleType;
     ParkingFeeStrategy *feeStrategy;
 
 public:
-    Vehicle(string lic, string vehType, ParkingFeeStrategy *feeStra)
+    Vehicle(string lic, VehicleType vehType, ParkingFeeStrategy *feeStra)
     {
         this->licenceNumber = lic;
         this->vehicleType = vehType;
         this->feeStrategy = feeStra;
     }
 
-    ~Vehicle() {}
+    virtual ~Vehicle() = default;
 
-    string getVehicleType()
+    VehicleType getVehicleType() const
     {
         return vehicleType;
     }
 
-    string getLicenceNumber()
+    string getLicenceNumber() const
     {
         return licenceNumber;
     }
-
-    double calculateFee(int duration)
+    ParkingFeeStrategy *getStrategy() const
     {
-        return feeStrategy->calculateFee(vehicleType, duration);
+        return feeStrategy;
     }
 };
 
 class Car : public Vehicle
 {
 public:
-    Car(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "car", feeStra) {};
+    Car(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, VehicleType::CAR, feeStra) {};
 };
 
 class Bike : public Vehicle
 {
 public:
-    Bike(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "bike", feeStra) {};
+    Bike(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, VehicleType::BIKE, feeStra) {};
 };
 
 class Auto : public Vehicle
 {
 public:
-    Auto(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "auto", feeStra) {};
+    Auto(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, VehicleType::AUTO, feeStra) {};
 };
 
 class Heavy : public Vehicle
 {
 public:
-    Heavy(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "heavy", feeStra) {};
+    Heavy(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, VehicleType::HEAVY, feeStra) {};
 };
 
 class Other : public Vehicle
 {
 public:
-    Other(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "other", feeStra) {};
+    Other(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, VehicleType::OTHER, feeStra) {};
 };
 
 class VehicleFactory
 {
 public:
-    static Vehicle *createVehicle(string vehicleType, string licenceNumber, ParkingFeeStrategy *parkingFeeType)
+    static Vehicle *createVehicle(VehicleType vehicleType, string licenceNumber, ParkingFeeStrategy *parkingFeeType)
     {
-        if (vehicleType == "car")
+        if (vehicleType == VehicleType::CAR)
         {
             return new Car(licenceNumber, parkingFeeType);
         }
-        else if (vehicleType == "bike")
+        else if (vehicleType == VehicleType::BIKE)
         {
             return new Bike(licenceNumber, parkingFeeType);
         }
-        else if (vehicleType == "auto")
+        else if (vehicleType == VehicleType::AUTO)
         {
             return new Auto(licenceNumber, parkingFeeType);
         }
-        else if (vehicleType == "heavy")
+        else if (vehicleType == VehicleType::HEAVY)
         {
             return new Heavy(licenceNumber, parkingFeeType);
         }
