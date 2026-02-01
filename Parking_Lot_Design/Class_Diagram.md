@@ -1,14 +1,24 @@
 ```mermaid
 classDiagram
 
-%% ================= Vehicle =================
+%% ================= ENUM =================
+class VehicleType {
+  <<enumeration>>
+  BIKE
+  AUTO
+  CAR
+  HEAVY
+  OTHER
+}
+
+%% ================= VEHICLE =================
 class Vehicle {
   -string licenceNumber
-  -string vehicleType
+  -VehicleType vehicleType
   -ParkingFeeStrategy* feeStrategy
-  +getVehicleType()
-  +getLicenceNumber()
-  +calculateFee(hours)
+  +getVehicleType() VehicleType
+  +getLicenceNumber() string
+  +getStrategy() ParkingFeeStrategy*
 }
 
 class Car
@@ -23,63 +33,17 @@ Vehicle <|-- Auto
 Vehicle <|-- Heavy
 Vehicle <|-- Other
 
+%% ================= VEHICLE FACTORY =================
 class VehicleFactory {
   +createVehicle(type, licence, strategy) Vehicle*
 }
 
 VehicleFactory --> Vehicle
 
-%% ================= Parking Spot =================
-class ParkingSpot {
-  -int spotNumber
-  -bool occupied
-  -Vehicle* vehicle
-  -string spotType
-  +canParkVehicle(Vehicle*) bool
-  +parkVehicle(Vehicle*)
-  +vacate()
-}
-
-class CarParkingSpot
-class BikeParkingSpot
-class AutoParkingSpot
-class HeavyParkingSpot
-class OtherParkingSpot
-
-ParkingSpot <|-- CarParkingSpot
-ParkingSpot <|-- BikeParkingSpot
-ParkingSpot <|-- AutoParkingSpot
-ParkingSpot <|-- HeavyParkingSpot
-ParkingSpot <|-- OtherParkingSpot
-
-%% ================= Parking Lot =================
-class ParkingLot {
-  -vector~ParkingSpot*~ parkingSpots
-  +findAvailableSpot(type) ParkingSpot*
-  +parkVehicle(Vehicle*) ParkingSpot*
-}
-
-ParkingLot o-- ParkingSpot
-ParkingLot --> Vehicle
-
-%% ================= Fee Strategy =================
-class ParkingFeeStrategy {
-  <<interface>>
-  +calculateFee(type, hours)
-}
-
-class BaseFareRateStrategy
-class PremiumFareRateStrategy
-
-ParkingFeeStrategy <|-- BaseFareRateStrategy
-ParkingFeeStrategy <|-- PremiumFareRateStrategy
-
-Vehicle --> ParkingFeeStrategy
-
-%% ================= Payment =================
+%% ================= PAYMENT =================
 class PaymentStrategy {
   <<interface>>
-  +processPayment(amount)
+  +process(amount)
 }
 
 class CreditCardPayment
@@ -97,5 +61,61 @@ class Payment {
 }
 
 Payment --> PaymentStrategy
+
+%% ================= PARKING FEE STRATEGY =================
+class ParkingFeeStrategy {
+  <<interface>>
+  +calculateFee(spotType, hours)
+}
+
+class BaseFareRateStrategy
+class PremiumFareRateStrategy
+
+ParkingFeeStrategy <|-- BaseFareRateStrategy
+ParkingFeeStrategy <|-- PremiumFareRateStrategy
+
+%% ================= PARKING SPOT =================
+class ParkingSpot {
+  -int spotNumber
+  -bool occupied
+  -Vehicle* vehicle
+  -VehicleType capacity
+  -ParkingFeeStrategy* strategy
+  +isOccupied() bool
+  +canParkVehicle(v: Vehicle) bool
+  +parkVehicle(v: Vehicle)
+  +vacate()
+  +getSpotNumber() int
+  +getVehicle() Vehicle*
+  +getSpotType() VehicleType
+}
+
+class CarParkingSpot
+class BikeParkingSpot
+class AutoParkingSpot
+class HeavyParkingSpot
+class OtherParkingSpot
+
+ParkingSpot <|-- CarParkingSpot
+ParkingSpot <|-- BikeParkingSpot
+ParkingSpot <|-- AutoParkingSpot
+ParkingSpot <|-- HeavyParkingSpot
+ParkingSpot <|-- OtherParkingSpot
+
+ParkingSpot --> Vehicle
+ParkingSpot --> ParkingFeeStrategy
 ParkingSpot --> Payment
+
+%% ================= PARKING LOT =================
+class ParkingLot {
+  -vector~ParkingSpot*~ parkingSpots
+  +findAvailableSpot(type) ParkingSpot*
+  +parkVehicle(v: Vehicle) ParkingSpot*
+  +vacateSpot(spot, vehicle)
+  +getSpotByNumber(num) ParkingSpot*
+}
+
+ParkingLot o-- ParkingSpot
+ParkingLot --> Vehicle
+
 ```
