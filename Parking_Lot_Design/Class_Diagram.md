@@ -1,22 +1,14 @@
-@startuml
+```mermaid
+classDiagram
 
-interface ParkingFeeStrategy {
-+calculateFee(type, hours)
-}
-
-class BaseFareRateStrategy
-class PremiumFareRateStrategy
-
-ParkingFeeStrategy <|-- BaseFareRateStrategy
-ParkingFeeStrategy <|-- PremiumFareRateStrategy
-
+%% ================= Vehicle =================
 class Vehicle {
--licenceNumber : string
--vehicleType : string
--feeStrategy : ParkingFeeStrategy
-+getVehicleType()
-+getLicenceNumber()
-+calculateFee(hours)
+  -string licenceNumber
+  -string vehicleType
+  -ParkingFeeStrategy* feeStrategy
+  +getVehicleType()
+  +getLicenceNumber()
+  +calculateFee(hours)
 }
 
 class Car
@@ -32,19 +24,20 @@ Vehicle <|-- Heavy
 Vehicle <|-- Other
 
 class VehicleFactory {
-+createVehicle(type, licence, strategy) : Vehicle
+  +createVehicle(type, licence, strategy) Vehicle*
 }
 
 VehicleFactory --> Vehicle
 
-abstract class ParkingSpot {
--spotNumber : int
--occupied : bool
--vehicle : Vehicle
--spotType : string
-+canParkVehicle(v: Vehicle) : bool
-+parkVehicle(v: Vehicle)
-+vacate()
+%% ================= Parking Spot =================
+class ParkingSpot {
+  -int spotNumber
+  -bool occupied
+  -Vehicle* vehicle
+  -string spotType
+  +canParkVehicle(Vehicle*) bool
+  +parkVehicle(Vehicle*)
+  +vacate()
 }
 
 class CarParkingSpot
@@ -59,17 +52,34 @@ ParkingSpot <|-- AutoParkingSpot
 ParkingSpot <|-- HeavyParkingSpot
 ParkingSpot <|-- OtherParkingSpot
 
+%% ================= Parking Lot =================
 class ParkingLot {
--parkingSpots : List<ParkingSpot>
-+findAvailableSpot(type) : ParkingSpot
-+parkVehicle(v: Vehicle) : ParkingSpot
+  -vector~ParkingSpot*~ parkingSpots
+  +findAvailableSpot(type) ParkingSpot*
+  +parkVehicle(Vehicle*) ParkingSpot*
 }
 
 ParkingLot o-- ParkingSpot
 ParkingLot --> Vehicle
 
-interface PaymentStrategy {
-+processPayment(amount)
+%% ================= Fee Strategy =================
+class ParkingFeeStrategy {
+  <<interface>>
+  +calculateFee(type, hours)
+}
+
+class BaseFareRateStrategy
+class PremiumFareRateStrategy
+
+ParkingFeeStrategy <|-- BaseFareRateStrategy
+ParkingFeeStrategy <|-- PremiumFareRateStrategy
+
+Vehicle --> ParkingFeeStrategy
+
+%% ================= Payment =================
+class PaymentStrategy {
+  <<interface>>
+  +processPayment(amount)
 }
 
 class CreditCardPayment
@@ -81,12 +91,11 @@ PaymentStrategy <|-- UPIPayment
 PaymentStrategy <|-- EMIPayment
 
 class Payment {
--amount : double
--strategy : PaymentStrategy
-+processPayment()
+  -double amount
+  -PaymentStrategy* paymentStrat
+  +processPayment()
 }
 
 Payment --> PaymentStrategy
 ParkingSpot --> Payment
-
-@enduml
+```
