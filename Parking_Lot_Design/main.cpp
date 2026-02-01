@@ -32,20 +32,42 @@ Implementation:
     4.1. Used to Notify systems when vehicle exits.
 */
 
-#include <bits/stdc++.h>
+#include "Vehicle_Creation.hpp"
+#include "Parking_Lot.hpp"
+
 using namespace std;
 
-
-
-class ParkingSlot
+int main()
 {
-public:
-    VehicleType slotType;
-    bool isOccupied;
-};
 
-class ParkingLot
-{
-public:
-    vector<ParkingSlot *> slots;
+    // Creating Parking Spots in a parking Lot;
+    vector<ParkingSpot *> parkingSpots;
+    parkingSpots.push_back(new CarParkingSpot(1));
+    parkingSpots.push_back(new CarParkingSpot(2));
+    parkingSpots.push_back(new BikeParkingSpot(3));
+    // parkingSpots.push_back(new BikeParkingSpot(4));
+    // parkingSpots.push_back(new BikeParkingSpot(5));
+    // parkingSpots.push_back(new AutoParkingSpot(6));
+    // parkingSpots.push_back(new AutoParkingSpot(7));
+    // parkingSpots.push_back(new HeavyParkingSpot(8));
+    // parkingSpots.push_back(new HeavyParkingSpot(9));
+
+    // Creating Parking Lot
+    ParkingLot *parkingLot = new ParkingLot(parkingSpots);
+
+    // Pricing basedo on clients requirement
+    ParkingFeeStrategy *basic = new BaseFareRateStrategy();
+    ParkingFeeStrategy *premium = new PremiumFareRateStrategy();
+
+    // Creating Vehicles
+    Vehicle *bike = VehicleFactory::createVehicle("bike", "tg-92", basic);
+    Vehicle *car = VehicleFactory::createVehicle("car", "Ap-12", premium);
+    Vehicle *auto1 = VehicleFactory::createVehicle("auto", "od-32", basic);
+
+    ParkingSpot *bikeSpot = parkingLot->parkVehicle(bike);
+    ParkingSpot *carSpot = parkingLot->parkVehicle(car);
+    ParkingSpot *auto1Spot = parkingLot->parkVehicle(auto1);
+
+    bikeSpot->vacate();
+    return 0;
 };

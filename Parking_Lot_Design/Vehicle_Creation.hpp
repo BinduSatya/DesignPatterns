@@ -3,7 +3,9 @@ Factory Design Pattern for creating Vehicle Types
 */
 
 #include <bits/stdc++.h>
-#include <Parking_Fee_Strategy.hpp>
+#include "Parking_Fee_Strategy.hpp"
+
+#pragma once
 
 using namespace std;
 
@@ -21,6 +23,8 @@ public:
         this->vehicleType = vehType;
         this->feeStrategy = feeStra;
     }
+
+    ~Vehicle() {}
 
     string getVehicleType()
     {
@@ -41,57 +45,57 @@ public:
 class Car : public Vehicle
 {
 public:
-    Car(string lic, string vehType, ParkingFeeStrategy *feeStra) : Vehicle(lic, "car", feeStra) {};
+    Car(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "car", feeStra) {};
 };
 
 class Bike : public Vehicle
 {
 public:
-    Bike(string lic, string vehType, ParkingFeeStrategy *feeStra) : Vehicle(lic, "bike", feeStra) {};
+    Bike(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "bike", feeStra) {};
 };
 
 class Auto : public Vehicle
 {
 public:
-    Auto(string lic, string vehType, ParkingFeeStrategy *feeStra) : Vehicle(lic, "auto", feeStra) {};
+    Auto(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "auto", feeStra) {};
 };
 
 class Heavy : public Vehicle
 {
 public:
-    Heavy(string lic, string vehType, ParkingFeeStrategy *feeStra) : Vehicle(lic, "heavy", feeStra) {};
+    Heavy(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "heavy", feeStra) {};
 };
 
 class Other : public Vehicle
 {
 public:
-    Other(string lic, string vehType, ParkingFeeStrategy *feeStra) : Vehicle(lic, "other", feeStra) {};
+    Other(string lic, ParkingFeeStrategy *feeStra) : Vehicle(lic, "other", feeStra) {};
 };
 
 class VehicleFactory
 {
 public:
-    Vehicle *createVehicle(string vehicleType, string licenceNumber, ParkingFeeStrategy *parkingFeeType)
+    static Vehicle *createVehicle(string vehicleType, string licenceNumber, ParkingFeeStrategy *parkingFeeType)
     {
         if (vehicleType == "car")
         {
-            return new Car(licenceNumber, vehicleType, parkingFeeType);
+            return new Car(licenceNumber, parkingFeeType);
         }
         else if (vehicleType == "bike")
         {
-            return new Bike(licenceNumber, vehicleType, parkingFeeType);
+            return new Bike(licenceNumber, parkingFeeType);
         }
         else if (vehicleType == "auto")
         {
-            return new Auto(licenceNumber, vehicleType, parkingFeeType);
+            return new Auto(licenceNumber, parkingFeeType);
         }
         else if (vehicleType == "heavy")
         {
-            return new Heavy(licenceNumber, vehicleType, parkingFeeType);
+            return new Heavy(licenceNumber, parkingFeeType);
         }
         else
         {
-            return new Other(licenceNumber, vehicleType, parkingFeeType);
+            return new Other(licenceNumber, parkingFeeType);
         }
     }
 };

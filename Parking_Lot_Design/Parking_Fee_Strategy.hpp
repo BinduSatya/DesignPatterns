@@ -1,6 +1,7 @@
 /*
 Strategy Design Pattern for calculating Parking Fee
 */
+#pragma once
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -8,10 +9,12 @@ class ParkingFeeStrategy
 {
 public:
     virtual double calculateFee(string vehicleType, int durationInHours) = 0;
+    ~ParkingFeeStrategy() {};
 };
 
 class BaseFareRateStrategy : public ParkingFeeStrategy
 {
+public:
     double calculateFee(string vehicleType, int durationInHours) override
     {
         if (vehicleType == "car")
@@ -30,6 +33,7 @@ class BaseFareRateStrategy : public ParkingFeeStrategy
 
 class PremiumFareRateStrategy : public ParkingFeeStrategy
 {
+public:
     double calculateFee(string vehicleType, int durationInHours) override
     {
         if (vehicleType == "car")

@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#pragma once
+
 class PaymentStrategy
 {
 public:
@@ -10,7 +12,7 @@ public:
 class CreditCardPayment : public PaymentStrategy
 {
 public:
-    void processPayment(double amount)
+    void processPayment(double amount) override
     {
         cout << "Processing Credit card payment of amount ₹" << amount << endl;
     }
@@ -30,7 +32,7 @@ class EMIPayment : public PaymentStrategy
 public:
     void processPayment(double amount) override
     {
-        cout << "Processing EMI payment of amount ₹" << amount << endl;
+        cout << "Processing EMI payment of amount Rup." << amount << endl;
     }
 };
 
@@ -46,11 +48,12 @@ public:
         this->amount = amount;
         this->paymentStrat = payStrat;
     }
+    ~Payment() {}
 
     void processPayment()
     {
         if (amount > 0)
-        { 
+        {
             paymentStrat->processPayment(amount);
         }
         else
