@@ -25,6 +25,7 @@ Implementation:
     2.2. Ensures consistent object creaion.
     2.3. It Helps manage different vehicle types
 
+Good to Have:
 3. Using Singleton Design Pattern for Parking Lot Management
     3.1. It ensures only one instance of parking lot exists
 
