@@ -13,7 +13,7 @@ It should manage
 
 - Shared Lock  = Reads
 - Exclusive Lock = Writes & Evictions
-- 
+-
 
 
 --------------------------------------------------------------
@@ -56,42 +56,9 @@ Strategies:
 */
 
 #include <bits/stdc++.h>
+#include <shared_mutex>
+#include <mutex>
 using namespace std;
-
-// class string
-// {
-//     string key;
-
-// public:
-//     string getstring()
-//     {
-//         return key;
-//     }
-
-//     void setstring(string key)
-//     {
-//         this->key = key;
-//     }
-
-//     virtual ~string() = default;
-// };
-
-// class string
-// {
-//     string value;
-
-// public:
-//     string getstring()
-//     {
-//         return value;
-//     }
-
-//     void setstring(string value)
-//     {
-//         this->value = value;
-//     }
-//     virtual ~string() = default;
-// };
 
 class CacheStorage
 {
@@ -99,7 +66,7 @@ public:
     virtual void put(string k, string v) = 0;
     virtual string get(string k) = 0;
     virtual void remove(string k) = 0;
-    virtual bool containsString(string k) = 0;
+    virtual bool contains(string k) = 0;
     virtual int size() = 0;
     virtual int getCapacity() = 0;
 
@@ -126,39 +93,27 @@ public:
         capacity = cap;
     }
 
-    void put(string key, string val)
+    void put(string key, string val) override
     {
         cache[key] = val;
     }
 
-    string get(string key) override
+    string get(string k) override
     {
-        if (cache.find(key) != cache.end())
-        {
-            return cache[key];
-        }
-        else
-        {
-            cout << "No key present" << endl;
+        auto it = cache.find(k);
+        if (it == cache.end())
             return "";
-        }
+        return it->second;
     }
 
     void remove(string k) override
     {
-        if (cache.find(k) != cache.end())
-        {
-            cout << "Removed key :'" << k << "' successfully" << endl;
-            cache.erase(k);
-        }
-        else
-        {
-            cout << "No key is present : " << k << endl;
-            return;
-        }
+        cout << "Removed key :'" << k << "' successfully" << endl;
+        cache.erase(k);
+        return;
     }
 
-    bool containsString(string k) override
+    bool contains(string k) override
     {
         return cache.find(k) != cache.end();
     }
@@ -177,15 +132,18 @@ public:
 class SimpleDBStorage : public DBStorage
 {
     unordered_map<string, string> storage;
+    mutex m;
 
 public:
     void write(string key, string value) override
     {
+        lock_guard<mutex> lg(m);
         storage[key] = value;
     }
 
     string read(string key) override
     {
+        lock_guard<mutex> lg(m);
         if (storage.find(key) != storage.end())
         {
             return storage[key];
@@ -195,6 +153,7 @@ public:
 
     void del(string key) override
     {
+        lock_guard<mutex> lg(m);
         if (storage.find(key) != storage.end())
         {
             storage.erase(key);
@@ -318,6 +277,7 @@ class Cache
     EvictionAlgorithm *evictionAlgo;
     WritePolicy *writePolicy;
     DBStorage *db;
+    mutable shared_mutex rwlock;
 
 public:
     Cache(CacheStorage *s,
@@ -328,7 +288,8 @@ public:
 
     void put(string key, string value)
     {
-        if (!storage->containsString(key) &&
+        unique_lock<shared_mutex> wlock(rwlock);
+        if (!storage->contains(key) &&
             storage->size() >= storage->getCapacity())
         {
             string evicted = evictionAlgo->evictNode();
@@ -340,22 +301,30 @@ public:
 
         writePolicy->write(key, value, storage, db);
         evictionAlgo->keyAccessed(key);
+        wlock.unlock();
     }
 
     string get(string key)
     {
-        if (!storage->containsString(key))
         {
-            string val = db->read(key);
-            if (val == "")
+            shared_lock<shared_mutex> rlock(rwlock);
+            if (!storage->contains(key))
             {
-                cout << "No such key is present in db" << endl;
-                return "";
+                string val = db->read(key);
+                if (val == "")
+                {
+                    cout << "No such key is present in db" << endl;
+                    return "";
+                }
+                storage->put(key, val);
+                return val;
             }
-            put(key, val);
-            return val;
         }
-        evictionAlgo->keyAccessed(key);
+        {
+            unique_lock<shared_mutex> wlock(rwlock);
+            evictionAlgo->keyAccessed(key);
+            wlock.unlock();
+        }
         return storage->get(key);
     }
 };
