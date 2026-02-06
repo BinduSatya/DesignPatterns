@@ -1,0 +1,7 @@
+ERROR: Database crashed at 2026-02-06 15:19:39
+ERROR: Database crashed at 2026-02-06 15:22:05
+{
+  "level": "ERROR",
+  "message": "Database crashed",
+  "timestamp": "2026-02-06 15:22:42"
+}
